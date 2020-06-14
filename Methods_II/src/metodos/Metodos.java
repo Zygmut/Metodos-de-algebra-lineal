@@ -1,9 +1,3 @@
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this zlate file, choose Tools | zlates
- * and open the zlate in the editor.
- */
 package metodos;
 
 import java.io.ObjectInputStream;

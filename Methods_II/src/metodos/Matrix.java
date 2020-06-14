@@ -1,13 +1,9 @@
 package metodos;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Scanner;
 import metodos.UserExceptions.*;
 
-/*
- * L U P se tienen que poder hacer con la matriz A sin que sea un sistema
- */
 public class Matrix implements Serializable {
 
     Scanner sc = new Scanner(System.in);
