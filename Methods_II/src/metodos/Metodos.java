@@ -29,7 +29,7 @@ public class Metodos {
 
     public void inicio() {
         //Program here
-        
+
         while (true) {
             mainMenu();
             int opt;
@@ -205,8 +205,17 @@ public class Metodos {
                     System.out.println("");
                     break;
 
-               
                 case 5:
+                    double[][] u = new double[25][50];
+                    double[] w = new double[25];
+                    //f(x)
+                    for (int i = 0; i < u[0].length; i++) {
+                        for (int j = 0; j < u.length; j++) {
+                            u[j][i] = 0;
+                        }
+
+                    }
+
                     ArrayList<Double> l = new ArrayList();
                     ArrayList<Double> r = new ArrayList();
                     Matrix x = new Matrix(25);
@@ -250,6 +259,31 @@ public class Metodos {
                     System.out.println("---Frontiers---");
                     System.out.println("Left frontier: " + Arrays.toString(l.toArray()));
                     System.out.println("Right frontier: " + Arrays.toString(r.toArray()));
+
+                    System.out.println("\n---CALCULOS---");
+                    //Inicializar matriz u
+
+                    for (int i = 0; i < 1; i++) { //Condicion representa la cantidad  de pasos que va a hacer el calculo
+
+                        for (int j = 0; j < u.length; j++) { //Recorrido del hilo
+                            if (j == 0 ) {
+                                u[j][0] += a * l.get(i);
+                            }else if(j == u.length - 1){
+                                u[j][0] += a * l.get(i);
+                            }
+                        }
+                        Matrix mat = new Matrix(25, true);
+                        mat.A = x.A;
+                        
+                        for (int j = 0; j < u.length; j++) {
+                            mat.b[j] = u[j][i];
+                        }
+                        System.out.println(mat.toString());
+                        
+                        System.out.println(Arrays.toString(mat.gaussPM()[1].resolve()));
+                        System.out.println(Arrays.toString(mat.gaussP()[1].resolve()));
+                    }
+
                     break;
 
                 case 6: //Exit 

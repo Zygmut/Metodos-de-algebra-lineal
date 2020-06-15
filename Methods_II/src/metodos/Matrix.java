@@ -476,7 +476,7 @@ public class Matrix implements Serializable {
                 out += A[i][j] + " ";
             }
             if (SEL) {
-                out += b[i];
+                out += "| "+ b[i];
             }
             out += "\n";
 
