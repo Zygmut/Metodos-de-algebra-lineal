@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 enum menu {
-    Create, Remove, Show, Calc, Heat, Exit;
+    Create, Remove, Show, Calc, Heat, Extra, Exit;
 }
 
 enum calc {
@@ -21,25 +21,12 @@ enum calc {
  */
 public class Metodos {
 
-    Scanner sc = new Scanner(System.in); //Scanner
-    ArrayList<Matrix> matr = new ArrayList(); //ArrayList With all the Matrix
-
-    ObjectOutputStream oos;
-    ObjectInputStream ois;
+    Scanner sc = new Scanner(System.in);
+    ArrayList<Matrix> matr = new ArrayList();
 
     public void inicio() {
-        //Program here
-
         while (true) {
-            mainMenu();
-            int opt;
-            try {
-                opt = Integer.parseInt(sc.nextLine());
-            } catch (NumberFormatException e) {
-                opt = -1;
-            }
-
-            switch (opt) {
+            switch (mainMenu()) {
 
                 case 1: //Create
                     try {
@@ -97,61 +84,57 @@ public class Metodos {
                     int opt2;
                     Matrix[] sol;
                     System.out.println("");
+
                     while (!calcexit) {
-                        calcMenu();
-                        int opt1;
                         try {
-                            opt1 = Integer.parseInt(sc.nextLine());
-                        } catch (NumberFormatException e) {
-                            opt1 = -1;
-                        }
-                        try {
-                            switch (opt1) {
+                            switch (calcMenu()) {
                                 case 1: //Gauss
-                                    if (matr.isEmpty()) {
-                                        throw new ArrayEmptyException();
-                                    } else {
-                                        if (matr.size() == 1) {
+                                    switch (matr.size()) {
+                                        case 0:
+                                            throw new ArrayEmptyException();
+                                        case 1:
                                             opt2 = 0;
-                                        } else {
+                                            break;
+                                        default:
                                             opt2 = checkMatr();
-                                        }
-                                        sol = matr.get(opt2).gauss();
-                                        System.out.println("\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
+                                            break;
                                     }
-                                    System.out.println("");
+                                    sol = matr.get(opt2).gauss();
+                                    System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
+
                                     break;
 
                                 case 2: //GaussP
-                                    if (matr.isEmpty()) {
-                                        throw new ArrayEmptyException();
-                                    } else {
-                                        if (matr.size() == 1) {
+                                    switch (matr.size()) {
+                                        case 0:
+                                            throw new ArrayEmptyException();
+                                        case 1:
                                             opt2 = 0;
-                                        } else {
+                                            break;
+                                        default:
                                             opt2 = checkMatr();
-                                        }
-                                        sol = matr.get(opt2).gaussP();
-                                        System.out.println("\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
+                                            break;
                                     }
-                                    System.out.println("");
+                                    sol = matr.get(opt2).gaussP();
+                                    System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
+
                                     break;
 
                                 case 3: //GaussPM
-                                    if (matr.isEmpty()) {
-                                        throw new ArrayEmptyException();
-                                    } else {
-                                        if (matr.size() == 1) {
+                                    switch (matr.size()) {
+                                        case 0:
+                                            throw new ArrayEmptyException();
+                                        case 1:
                                             opt2 = 0;
-                                        } else {
+                                            break;
+                                        default:
                                             opt2 = checkMatr();
-                                        }
-                                        sol = matr.get(opt2).gaussPM();
-                                        System.out.println("\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nQ\n" + sol[3].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
+                                            break;
                                     }
-                                    System.out.println("");
-                                    break;
+                                    sol = matr.get(opt2).gaussPM();
+                                    System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nQ\n" + sol[3].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
 
+                                    break;
                                 case 4: //Sum
                                     switch (matr.size()) {
                                         case 0:
@@ -167,7 +150,6 @@ public class Metodos {
                                             matr.add(Matrix.sum(matr.get(opt2), matr.get(opt3)));
                                             break;
                                     }
-                                    System.out.println("");
                                     break;
 
                                 case 5: //Sub
@@ -185,18 +167,16 @@ public class Metodos {
                                             matr.add(Matrix.sub(matr.get(opt2), matr.get(opt3)));
                                             break;
                                     }
-                                    System.out.println("");
                                     break;
 
                                 case 6: //Exit
                                     calcexit = true;
-                                    System.out.println("");
                                     break;
 
                                 default: //Def
-                                    System.out.println("");
                                     break;
                             }
+                            System.out.println("");
                         } catch (ArrayEmptyException | DifferentSizeException | NotEnoughMatrixException e) {
                             System.out.println("ERROR: " + e.getLocalizedMessage());
                             System.out.println("");
@@ -206,48 +186,65 @@ public class Metodos {
                     break;
 
                 case 5:
-                    double[][] u = new double[25][50];
-                    double[] w = new double[25];
+                    int t = 0,
+                     s = 0;
+
+                    System.out.print("Rod samples: "); //I
+                    try {
+                        s = Integer.parseInt(sc.nextLine());
+                    } catch (Exception e) {
+                    }
+
+                    System.out.print("\nTime stamps: ");
+                    try {
+                        t = Integer.parseInt(sc.nextLine());
+                    } catch (Exception e) {
+                    }
+
+                    double[][] u = new double[s][t];
+                    double[] w = new double[s];
+
                     //f(x)
-                    for (int i = 0; i < u[0].length; i++) {
+                    for (int i = 0; i < u[0].length && i == 0; i++) {
                         for (int j = 0; j < u.length; j++) {
                             u[j][i] = 0;
                         }
-
                     }
 
+                    //Variables
                     ArrayList<Double> l = new ArrayList();
                     ArrayList<Double> r = new ArrayList();
-                    Matrix x = new Matrix(25);
+                    Matrix bigHeat = new Matrix(u.length);
                     Double L = 1.00,
                      T = 10.00,
-                     I = 25.00,
-                     J = 50.00,
+                     I = (double) s,
+                     J = (double) t,
                      k = T / J,
                      h = L / I,
                      a = k / Math.pow(h, 2);
 
-                    for (int i = 0; i < x.n; i++) {
-                        for (int j = 0; j < x.n; j++) {
+                    //Generate big heat matrix 
+                    for (int i = 0; i < bigHeat.n; i++) {
+                        for (int j = 0; j < bigHeat.n; j++) {
                             if (i == j) {
-                                x.A[i][j] = 251;
+                                bigHeat.A[i][j] = 251;
                                 try {
-                                    x.A[i][j - 1] = -125;
+                                    bigHeat.A[i][j - 1] = -125;
                                 } catch (Exception e) {
                                 }
                                 try {
-                                    x.A[i][j + 1] = -125;
+                                    bigHeat.A[i][j + 1] = -125;
                                 } catch (Exception e) {
                                 }
                             }
                         }
                     }
 
-                    for (int i = 1; i <= 50; i++) {
+                    for (int i = 1; i <= u[0].length; i++) {
                         Double aux1 = (6 / Math.PI) * Math.atan(10 * i);
                         Double aux2 = -(2 / Math.PI) * Math.atan(10 * i);
                         l.add(aux1);
-                        r.add(aux2);
+                        r.add(aux1);
                     }
                     System.out.println("---DATA---\nL: " + L + "\nT: " + T + "\nI: " + I + "\nJ: " + J + "\n");
                     System.out.println("k: " + k);
@@ -255,38 +252,64 @@ public class Metodos {
                     System.out.println("h^2: " + Math.pow(h, 2));
                     System.out.println("\u03B1: " + a + "\n");
                     System.out.println("---Matrix---");
-                    System.out.println(x.octexport() + "\n");
+                    System.out.println(bigHeat.octexport() + "\n");
                     System.out.println("---Frontiers---");
                     System.out.println("Left frontier: " + Arrays.toString(l.toArray()));
                     System.out.println("Right frontier: " + Arrays.toString(r.toArray()));
 
                     System.out.println("\n---CALCULOS---");
-                    //Inicializar matriz u
 
-                    for (int i = 0; i < 1; i++) { //Condicion representa la cantidad  de pasos que va a hacer el calculo
+                    //Inicializar matriz u
+                    for (int i = 0; i < u[0].length; i++) { //Condicion representa la cantidad  de pasos que va a hacer el calculo
 
                         for (int j = 0; j < u.length; j++) { //Recorrido del hilo
-                            if (j == 0 ) {
-                                u[j][0] += a * l.get(i);
-                            }else if(j == u.length - 1){
-                                u[j][0] += a * l.get(i);
+                            if (j == 0) { //Fronteras
+                                u[j][i] += a * l.get(i);
+                            } else if (j == u.length - 1) {
+                                u[j][i] += a * r.get(i);
                             }
                         }
-                        Matrix mat = new Matrix(25, true);
-                        mat.A = x.A;
-                        
+
+                        Matrix mat = new Matrix(u.length, true);//Generar el SEL para aplicar GaussPM
+                        mat.A = bigHeat.A;
+
                         for (int j = 0; j < u.length; j++) {
                             mat.b[j] = u[j][i];
                         }
-                        System.out.println(mat.toString());
-                        
-                        System.out.println(Arrays.toString(mat.gaussPM()[1].resolve()));
-                        System.out.println(Arrays.toString(mat.gaussP()[1].resolve()));
-                    }
 
+                        w = mat.gaussPM()[1].resolve();
+
+                        for (int j = 0; j < u.length && i != u[0].length - 1; j++) { //Copy 
+                            u[j][i + 1] = w[j];
+                            System.out.print(u[j][i + 1] + " ");
+                        }
+                        System.out.println("");
+
+                        //System.out.println(Arrays.toString(w));
+                    }
                     break;
 
-                case 6: //Exit 
+                case 6: //Extra
+                    Matrix tempMatrix = new Matrix(15);
+                    for (int i = 0; i < tempMatrix.n; i++) {
+                        for (int j = 0; j < tempMatrix.n; j++) {
+                            if (i == j) {
+                                tempMatrix.A[i][j] = (1 + Math.pow(3, 2)) / 2;
+                                try {
+                                    tempMatrix.A[i][j - 1] = -(Math.pow(3, 2)/4);
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    tempMatrix.A[i][j + 1] = -(Math.pow(3, 2)/4);
+                                } catch (Exception e) {
+                                }
+                            }
+                        }
+                    }
+                    System.out.println(tempMatrix.octexport());
+
+                    break;
+                case 7: //Exit 
                     System.exit(0);
                     break;
                 default: //Def
@@ -310,18 +333,25 @@ public class Metodos {
         return rem;
     }
 
-    public void mainMenu() {
+    public int mainMenu() {
         System.out.println("*-------------------------------*");
         System.out.println("|           MAIN MENU           |");
         System.out.println("*-------------------------------*");
         for (int i = 0; i < menu.values().length; i++) {
-            System.out.println((i + 1) + ") " + menu.values()[i].name());
+            System.out.println((i + 1) + ") " + menu.values()[i].name().replaceAll("_", " "));
         }
         System.out.println("---------------------------------");
         System.out.print("Option: ");
+        int opt;
+        try {
+            opt = Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            opt = -1;
+        }
+        return opt;
     }
 
-    public void calcMenu() {
+    public int calcMenu() {
         System.out.println("*-------------------------------*");
         System.out.println("|           CALC MENU           |");
         System.out.println("*-------------------------------*");
@@ -330,6 +360,13 @@ public class Metodos {
         }
         System.out.println("---------------------------------");
         System.out.print("Option: ");
+        int opt1;
+        try {
+            opt1 = Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            opt1 = -1;
+        }
+        return opt1;
     }
 
     public static void main(String[] args) {

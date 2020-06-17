@@ -192,16 +192,20 @@ public class Matrix implements Serializable {
     private Matrix gaussD() {
         Matrix L = new Matrix(this.n);
         L.identity();
+        double alpha = 0.00;
         for (int p = 0; p < n; p++) {
             for (int i = p + 1; i < n; i++) {
-                double alpha = A[i][p] / A[p][p];
+                alpha = A[i][p] / A[p][p];
                 L.A[i][p] = alpha;
                 b[i] -= alpha * b[p];
+                System.out.println("\u03B1: " + A[i][p] + "/" + A[p][p] + "\n");
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
+                System.out.println("L:\n" + L.Astring() + "\nU:\n" + toString(true) + "\n-------------------------------\n");
             }
         }
+
         return L;
     }
 
@@ -258,9 +262,15 @@ public class Matrix implements Serializable {
                 double alpha = A[i][p] / A[p][p];
                 sol[0].A[i][p] = alpha;
                 b[i] -= alpha * b[p];
+                if (i == p + 1) {
+                    System.out.print("Swap: " + p + ", " + max);
+                }
+                System.out.println("\n" + "\u03B1: " + A[i][p] + "/" + A[p][p]);
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
+                System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\n-------------------------------\n");
+
             }
         }
         return sol;
@@ -335,12 +345,17 @@ public class Matrix implements Serializable {
                 double alpha = A[i][p] / A[p][p];
                 sol[0].A[i][p] = alpha;
                 b[i] -= alpha * b[p];
+                if (i == p + 1) {
+                    System.out.print("SwapRow: " + p + ", " + maxr + "\nSwapCol: " + p + ", " + maxc);
+                }
+                System.out.println("\u03B1: " + A[i][p] + "/" + A[p][p] + "\n");
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
+                System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\nQ:\n" + sol[2].Astring() + "\n-------------------------------\n");
+
             }
         }
-
         return sol;
     }
 
@@ -356,8 +371,7 @@ public class Matrix implements Serializable {
             }
             solution[i] = (b[i] - sum) / A[i][i];
         }
-        double[] fSolution = sort(solution);
-        return fSolution;
+        return sort(solution);
     }
 
     /*
@@ -382,7 +396,7 @@ public class Matrix implements Serializable {
                 }
             }
         }
-    return sol;
+        return sol;
     }
 
     public void val() {
@@ -476,7 +490,22 @@ public class Matrix implements Serializable {
                 out += A[i][j] + " ";
             }
             if (SEL) {
-                out += "| "+ b[i];
+                out += "| " + b[i];
+            }
+            out += "\n";
+
+        }
+        return out;
+    }
+
+    public String toString(boolean cond) {
+        String out = "";
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                out += A[i][j] + " ";
+            }
+            if (cond) {
+                out += "| " + b[i];
             }
             out += "\n";
 
