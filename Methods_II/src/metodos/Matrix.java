@@ -346,13 +346,13 @@ public class Matrix implements Serializable {
                 sol[0].A[i][p] = alpha;
                 b[i] -= alpha * b[p];
                 if (i == p + 1) {
-                    System.out.print("SwapRow: " + p + ", " + maxr + "\nSwapCol: " + p + ", " + maxc);
+                    //System.out.print("SwapRow: " + p + ", " + maxr + "\nSwapCol: " + p + ", " + maxc);
                 }
-                System.out.println("\u03B1: " + A[i][p] + "/" + A[p][p] + "\n");
+                //System.out.println("\n\u03B1: " + A[i][p] + "/" + A[p][p] );
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
-                System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\nQ:\n" + sol[2].Astring() + "\n-------------------------------\n");
+                //System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\nQ:\n" + sol[2].Astring() + "\n-------------------------------\n");
 
             }
         }
@@ -451,6 +451,26 @@ public class Matrix implements Serializable {
         A[j] = temp;
     }
 
+    /*
+     * Export Matrix to LaTeX
+     */
+    public String latexExport() {
+        String s = "\\begin{pmatrix}\n";
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                s += String.format("%.3g", A[i][j]) + " & ";
+            }
+            if (i != n - 1) {
+                s += "\\\\";
+            }
+            s += "\n";
+        }
+        return s += "\\end{pmatrix}";
+    }
+
+    /*
+     * Export Matrix to Octave
+     */
     public String octexport() {
         String out = "[";
         for (int i = 0; i < n; i++) {

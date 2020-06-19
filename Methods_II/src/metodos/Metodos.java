@@ -1,7 +1,5 @@
 package metodos;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import metodos.UserExceptions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,7 +187,7 @@ public class Metodos {
                     int t = 0,
                      s = 0;
 
-                    System.out.print("Rod samples: "); //I
+                    System.out.print("Rod samples: ");
                     try {
                         s = Integer.parseInt(sc.nextLine());
                     } catch (Exception e) {
@@ -201,51 +199,33 @@ public class Metodos {
                     } catch (Exception e) {
                     }
 
-                    double[][] u = new double[s][t];
-                    double[] w = new double[s];
+                    double[][] M = new double[s][t];
 
-                    //f(x)
-                    for (int i = 0; i < u[0].length && i == 0; i++) {
-                        for (int j = 0; j < u.length; j++) {
-                            u[j][i] = 0;
-                        }
-                    }
+                    //Vectores sin las fronteras, para simplificar la SEL
+                    double[] u = new double[s - 2];
+                    double[] w = new double[s - 2];
 
-                    //Variables
                     ArrayList<Double> l = new ArrayList();
                     ArrayList<Double> r = new ArrayList();
-                    Matrix bigHeat = new Matrix(u.length);
                     Double L = 1.00,
                      T = 10.00,
                      I = (double) s,
                      J = (double) t,
                      k = T / J,
                      h = L / I,
-                     a = k / Math.pow(h, 2);
+                     a = k / Math.pow(h, 2),
+                     aux1,
+                     aux2;
+                    Matrix bigHeat = heatMatrix(a, u.length); //SEL Matrix
 
-                    //Generate big heat matrix 
-                    for (int i = 0; i < bigHeat.n; i++) {
-                        for (int j = 0; j < bigHeat.n; j++) {
-                            if (i == j) {
-                                bigHeat.A[i][j] = 251;
-                                try {
-                                    bigHeat.A[i][j - 1] = -125;
-                                } catch (Exception e) {
-                                }
-                                try {
-                                    bigHeat.A[i][j + 1] = -125;
-                                } catch (Exception e) {
-                                }
-                            }
-                        }
-                    }
-
-                    for (int i = 1; i <= u[0].length; i++) {
-                        Double aux1 = (6 / Math.PI) * Math.atan(10 * i);
-                        Double aux2 = -(2 / Math.PI) * Math.atan(10 * i);
+                    //Fronteras con respecto al tiempo
+                    for (int i = 1; i <= M[0].length; i++) {
+                        aux1 = (6 / Math.PI) * Math.atan(10 * i);
+                        aux2 = (6 / Math.PI) * Math.atan(10 * i);
                         l.add(aux1);
-                        r.add(aux1);
+                        r.add(aux2);
                     }
+
                     System.out.println("---DATA---\nL: " + L + "\nT: " + T + "\nI: " + I + "\nJ: " + J + "\n");
                     System.out.println("k: " + k);
                     System.out.println("h: " + h);
@@ -256,57 +236,31 @@ public class Metodos {
                     System.out.println("---Frontiers---");
                     System.out.println("Left frontier: " + Arrays.toString(l.toArray()));
                     System.out.println("Right frontier: " + Arrays.toString(r.toArray()));
-
                     System.out.println("\n---CALCULOS---");
 
-                    //Inicializar matriz u
-                    for (int i = 0; i < u[0].length; i++) { //Condicion representa la cantidad  de pasos que va a hacer el calculo
+                    //Calculo
+                    for (int i = 0; i < M[0].length; i++) {
+                        u = w;
 
-                        for (int j = 0; j < u.length; j++) { //Recorrido del hilo
-                            if (j == 0) { //Fronteras
-                                u[j][i] += a * l.get(i);
-                            } else if (j == u.length - 1) {
-                                u[j][i] += a * r.get(i);
-                            }
+                        //Guardar el vector u en M
+                        M[0][i] = l.get(i);
+                        for (int j = 0; j < M.length - 2; j++) {
+                            M[j + 1][i] = u[j];
                         }
+                        M[M.length - 1][i] = r.get(i);
 
-                        Matrix mat = new Matrix(u.length, true);//Generar el SEL para aplicar GaussPM
-                        mat.A = bigHeat.A;
+                        //Adaptar el vector u a la SEL
+                        u[0] += +a * l.get(i);
+                        u[u.length - 1] += +a * r.get(i);
 
-                        for (int j = 0; j < u.length; j++) {
-                            mat.b[j] = u[j][i];
-                        }
-
-                        w = mat.gaussPM()[1].resolve();
-
-                        for (int j = 0; j < u.length && i != u[0].length - 1; j++) { //Copy 
-                            u[j][i + 1] = w[j];
-                            System.out.print(u[j][i + 1] + " ");
-                        }
-                        System.out.println("");
-
-                        //System.out.println(Arrays.toString(w));
+                        bigHeat.b = u;
+                        w = bigHeat.gaussPM()[1].resolve();
                     }
+                    //print(M);
+                    System.out.println(latexExport(M));
                     break;
 
                 case 6: //Extra
-                    Matrix tempMatrix = new Matrix(15);
-                    for (int i = 0; i < tempMatrix.n; i++) {
-                        for (int j = 0; j < tempMatrix.n; j++) {
-                            if (i == j) {
-                                tempMatrix.A[i][j] = (1 + Math.pow(3, 2)) / 2;
-                                try {
-                                    tempMatrix.A[i][j - 1] = -(Math.pow(3, 2)/4);
-                                } catch (Exception e) {
-                                }
-                                try {
-                                    tempMatrix.A[i][j + 1] = -(Math.pow(3, 2)/4);
-                                } catch (Exception e) {
-                                }
-                            }
-                        }
-                    }
-                    System.out.println(tempMatrix.octexport());
 
                     break;
                 case 7: //Exit 
@@ -317,6 +271,64 @@ public class Metodos {
                     break;
             }
         }
+    }
+
+    /*
+     *Generates the heat matrix given the alpha value and the dimension
+     */
+    private Matrix heatMatrix(double a, int n) {
+        Matrix temp = new Matrix(n, true);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    temp.A[i][j] = 1 + 2 * a;
+                    try {
+                        temp.A[i][j - 1] = -a;
+                    } catch (Exception e) {
+                    }
+                    try {
+                        temp.A[i][j + 1] = -a;
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+        return temp;
+    }
+
+    /*
+     * Prints the M Matrix, just for convenience
+     */
+    private String print(double[][] M) {
+        String sMatrix = "";
+        for (int i = 0; i < M[0].length - 1; i++) {
+            sMatrix += "[";
+            for (int j = 0; j < M.length; j++) {
+                sMatrix += M[j][i] + " | ";
+            }
+            sMatrix += M[M.length - 1][i] + "]\n";
+        }
+        return sMatrix;
+    }
+
+    /*
+     * Export Matrix to LaTeX
+     */
+    public String latexExport(double[][] x) {
+        String s = "\\begin{pmatrix}\n";
+        for (int i = 0; i < x[0].length ; i++) {
+            for (int j = 0; j < x.length; j++) {
+                s += String.format("%.4g", x[j][i]);
+                if (j!= x.length-1) {
+                    s += " & ";
+                }
+            }
+            if (i != x[0].length - 1) {
+                s += "\\\\";
+            }
+            s += "\n";
+        }
+        return s += "\\end{pmatrix}";
     }
 
     /*
