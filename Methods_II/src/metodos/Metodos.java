@@ -219,9 +219,11 @@ public class Metodos {
                     Matrix bigHeat = heatMatrix(a, u.length); //SEL Matrix
 
                     //Fronteras con respecto al tiempo
-                    for (int i = 1; i <= M[0].length; i++) {
-                        aux1 = (6 / Math.PI) * Math.atan(10 * i);
-                        aux2 = (6 / Math.PI) * Math.atan(10 * i);
+                    for (int i = 1; i <= M[0].length + 1; i++) {
+                        //aux1 = (6 / Math.PI) * Math.atan(10 * i);
+                        //aux2 = (6 / Math.PI) * Math.atan(10 * i);
+                        aux1 = 100000.00;
+                        aux2 = 100000.00;
                         l.add(aux1);
                         r.add(aux2);
                     }
@@ -250,14 +252,25 @@ public class Metodos {
                         M[M.length - 1][i] = r.get(i);
 
                         //Adaptar el vector u a la SEL
-                        u[0] += +a * l.get(i);
-                        u[u.length - 1] += +a * r.get(i);
+                        u[0] += +a * l.get(i+1);
+                        u[u.length - 1] += +a * r.get(i+1);
 
                         bigHeat.b = u;
                         w = bigHeat.gaussPM()[1].resolve();
                     }
-                    //print(M);
-                    System.out.println(latexExport(M));
+                    System.out.println(print(M));
+                    //System.out.println(latexExport(M));
+
+                    String sMatrix = "";
+                    for (int i = 0; i < J; i++) {
+                        sMatrix += "    $u_{" + i + "}$&: [";
+                        for (int j = 0; j < M.length - 1; j++) {
+                            sMatrix += String.format("%.5g", M[j][i]) + ", ";
+                        }
+                        sMatrix += String.format("%.5g", M[M.length - 1][i]) + "]\\\\\n";
+                    }
+                    System.out.println(sMatrix);
+
                     break;
 
                 case 6: //Extra
@@ -301,12 +314,12 @@ public class Metodos {
      */
     private String print(double[][] M) {
         String sMatrix = "";
-        for (int i = 0; i < M[0].length - 1; i++) {
-            sMatrix += "[";
-            for (int j = 0; j < M.length; j++) {
-                sMatrix += M[j][i] + " | ";
+        for (int i = 0; i < M[0].length; i++) {
+            sMatrix += i + " [";
+            for (int j = 0; j < M.length - 1; j++) {
+                sMatrix += String.format("%.4g", M[j][i]) + " | ";
             }
-            sMatrix += M[M.length - 1][i] + "]\n";
+            sMatrix += String.format("%.4g", M[M.length - 1][i]) + "]\n";
         }
         return sMatrix;
     }
@@ -316,10 +329,10 @@ public class Metodos {
      */
     public String latexExport(double[][] x) {
         String s = "\\begin{pmatrix}\n";
-        for (int i = 0; i < x[0].length ; i++) {
+        for (int i = 0; i < x[0].length; i++) {
             for (int j = 0; j < x.length; j++) {
                 s += String.format("%.4g", x[j][i]);
-                if (j!= x.length-1) {
+                if (j != x.length - 1) {
                     s += " & ";
                 }
             }
