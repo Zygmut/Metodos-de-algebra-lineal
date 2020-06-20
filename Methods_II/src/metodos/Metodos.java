@@ -220,10 +220,8 @@ public class Metodos {
 
                     //Fronteras con respecto al tiempo
                     for (int i = 1; i <= M[0].length + 1; i++) {
-                        //aux1 = (6 / Math.PI) * Math.atan(10 * i);
-                        //aux2 = (6 / Math.PI) * Math.atan(10 * i);
-                        aux1 = 100000.00;
-                        aux2 = 100000.00;
+                        aux1 = (6 / Math.PI) * Math.atan(10 * i);
+                        aux2 = (6 / Math.PI) * Math.atan(10 * i);
                         l.add(aux1);
                         r.add(aux2);
                     }
