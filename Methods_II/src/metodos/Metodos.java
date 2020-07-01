@@ -256,19 +256,18 @@ public class Metodos {
                         bigHeat.b = u;
                         w = bigHeat.gaussPM()[1].resolve();
                     }
-                    System.out.println(print(M));
-                    //System.out.println(latexExport(M));
+                    //System.out.println(print(M));
 
                     String sMatrix = "";
                     for (int i = 0; i < J; i++) {
-                        sMatrix += "    $u_{" + i + "}$&: [";
+                        sMatrix += "    $fila_{" + i + "}$&: [";
                         for (int j = 0; j < M.length - 1; j++) {
                             sMatrix += String.format("%.5g", M[j][i]) + ", ";
                         }
                         sMatrix += String.format("%.5g", M[M.length - 1][i]) + "]\\\\\n";
                     }
                     System.out.println(sMatrix);
-
+                    //System.out.println(Rexport(M));
                     break;
 
                 case 6: //Extra
@@ -319,6 +318,28 @@ public class Metodos {
             }
             sMatrix += String.format("%.4g", M[M.length - 1][i]) + "]\n";
         }
+        return sMatrix;
+    }
+    
+    /*
+     * Prints the M Matrix, just for convenience
+     */
+    private String Rexport(double[][] M) {
+        String sMatrix = "";
+        String temp = "matrix = rbind(";
+        for (int i = 0; i < M[0].length; i++) {
+            sMatrix += "c"+i + "= c(";
+            for (int j = 0; j < M.length - 1; j++) {
+                sMatrix += String.format("%.5g", M[j][i]) + ", ";
+            }
+            sMatrix += String.format("%.5g", M[M.length - 1][i]) + ")\n";
+             temp += "c"+i;
+            if (i !=M[0].length-1) {
+                temp +=","; 
+            }
+           
+        }
+        sMatrix+=temp+")";
         return sMatrix;
     }
 
