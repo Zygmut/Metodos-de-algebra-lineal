@@ -10,7 +10,7 @@ enum menu {
 }
 
 enum calc {
-    Gauss, Gauss_pivot, Gauss_complete, Sum, Sub, Exit
+    Gauss, Gauss_pivot, Gauss_complete, Sum, Sub, Det, Exit
 }
 
 /**
@@ -40,7 +40,6 @@ public class Metodos {
                     } catch (NumberFormatException e) {
                         System.out.println("ERROR: " + e.getLocalizedMessage());
                     }
-                    System.out.println("");
                     break;
 
                 case 2: //Remove
@@ -55,7 +54,6 @@ public class Metodos {
                     } catch (NumberFormatException | ArrayEmptyException e) {
                         System.out.println("ERROR: " + e.getLocalizedMessage());
                     }
-                    System.out.println("");
                     break;
 
                 case 3: //Show
@@ -74,7 +72,6 @@ public class Metodos {
                     } catch (ArrayEmptyException e) {
                         System.out.println("ERROR: " + e.getLocalizedMessage());
                     }
-                    System.out.println("");
                     break;
 
                 case 4: //Calc
@@ -97,7 +94,7 @@ public class Metodos {
                                             opt2 = checkMatr();
                                             break;
                                     }
-                                    sol = matr.get(opt2).gauss();
+                                    sol = matr.get(opt2).gauss(true);
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
 
                                     break;
@@ -113,7 +110,7 @@ public class Metodos {
                                             opt2 = checkMatr();
                                             break;
                                     }
-                                    sol = matr.get(opt2).gaussP();
+                                    sol = matr.get(opt2).gaussP(true);
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
 
                                     break;
@@ -129,7 +126,7 @@ public class Metodos {
                                             opt2 = checkMatr();
                                             break;
                                     }
-                                    sol = matr.get(opt2).gaussPM();
+                                    sol = matr.get(opt2).gaussPM(true);
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nQ\n" + sol[3].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
 
                                     break;
@@ -167,7 +164,21 @@ public class Metodos {
                                     }
                                     break;
 
-                                case 6: //Exit
+                                case 6: //Det
+                                    switch (matr.size()) {
+                                        case 0:
+                                            throw new ArrayEmptyException();
+                                        case 1:
+                                            System.out.println("Determinant: " + matr.get(0).det());
+                                            break;
+                                        default:
+                                            opt2 = checkMatr();
+                                            int opt3 = checkMatr();
+                                            System.out.println("Determinant: " + matr.get(opt3).det());
+                                            break;
+                                    }
+                                    break;
+                                case 7: //Exit
                                     calcexit = true;
                                     break;
 
@@ -177,10 +188,8 @@ public class Metodos {
                             System.out.println("");
                         } catch (ArrayEmptyException | DifferentSizeException | NotEnoughMatrixException e) {
                             System.out.println("ERROR: " + e.getLocalizedMessage());
-                            System.out.println("");
                         }
                     }
-                    System.out.println("");
                     break;
 
                 case 5:
@@ -250,11 +259,11 @@ public class Metodos {
                         M[M.length - 1][i] = r.get(i);
 
                         //Adaptar el vector u a la SEL
-                        u[0] += +a * l.get(i+1);
-                        u[u.length - 1] += +a * r.get(i+1);
+                        u[0] += +a * l.get(i + 1);
+                        u[u.length - 1] += +a * r.get(i + 1);
 
                         bigHeat.b = u;
-                        w = bigHeat.gaussPM()[1].resolve();
+                        w = bigHeat.gaussPM(false)[1].resolve();
                     }
                     //System.out.println(print(M));
 
@@ -277,9 +286,9 @@ public class Metodos {
                     System.exit(0);
                     break;
                 default: //Def
-                    System.out.println("");
                     break;
             }
+            System.out.println("");
         }
     }
 
@@ -320,7 +329,7 @@ public class Metodos {
         }
         return sMatrix;
     }
-    
+
     /*
      * Prints the M Matrix, just for convenience
      */
@@ -328,18 +337,18 @@ public class Metodos {
         String sMatrix = "";
         String temp = "matrix = rbind(";
         for (int i = 0; i < M[0].length; i++) {
-            sMatrix += "c"+i + "= c(";
+            sMatrix += "c" + i + "= c(";
             for (int j = 0; j < M.length - 1; j++) {
                 sMatrix += String.format("%.5g", M[j][i]) + ", ";
             }
             sMatrix += String.format("%.5g", M[M.length - 1][i]) + ")\n";
-             temp += "c"+i;
-            if (i !=M[0].length-1) {
-                temp +=","; 
+            temp += "c" + i;
+            if (i != M[0].length - 1) {
+                temp += ",";
             }
-           
+
         }
-        sMatrix+=temp+")";
+        sMatrix += temp + ")";
         return sMatrix;
     }
 

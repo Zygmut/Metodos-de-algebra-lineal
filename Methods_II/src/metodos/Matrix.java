@@ -97,6 +97,9 @@ public class Matrix implements Serializable {
 
     }
 
+    //                   //
+    //    OPERATIONS     //
+    //                   //
     /*
      * Sums two matrix
      */
@@ -170,9 +173,34 @@ public class Matrix implements Serializable {
     }
 
     /*
+     * Returns de determinant 
+     */
+    public double det() {
+        double det = 1.00;
+        Matrix U = this.gaussPM(false)[1];
+        for (int i = 0; i < U.A[0].length; i++) {
+            det *= U.A[i][i];
+
+        }
+        return det;
+    }
+
+    /*
+     * Returns de determinant given Matrix a
+     */
+    public static double det(Matrix a) {
+        double det = 1.00;
+        Matrix U = a.gauss(false)[1];
+        for (int i = 0; i < U.A[0].length; i++) {
+            det *= U.A[i][i];
+        }
+        return det;
+    }
+
+    /*
      * Simple Gauss Sol(0 = L, 1 = U)
      */
-    public Matrix[] gauss() {
+    public Matrix[] gauss(boolean visible) {
         Matrix[] sol = new Matrix[2];
         Matrix temp = new Matrix(n);
         for (int i = 0; i < n; i++) {
@@ -181,7 +209,7 @@ public class Matrix implements Serializable {
             }
             temp.b[i] = b[i];
         }
-        sol[0] = temp.gaussD();
+        sol[0] = temp.gaussD(visible);
         sol[1] = temp;
         return sol;
     }
@@ -189,7 +217,7 @@ public class Matrix implements Serializable {
     /*
      * Simple Gauss 
      */
-    private Matrix gaussD() {
+    private Matrix gaussD(boolean visible) {
         Matrix L = new Matrix(this.n);
         L.identity();
         double alpha = 0.00;
@@ -198,11 +226,16 @@ public class Matrix implements Serializable {
                 alpha = A[i][p] / A[p][p];
                 L.A[i][p] = alpha;
                 b[i] -= alpha * b[p];
-                System.out.println("\u03B1: " + A[i][p] + "/" + A[p][p] + "\n");
+                if (visible) {
+                    System.out.println("\u03B1: " + A[i][p] + "/" + A[p][p] + "\n");
+                }
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
-                System.out.println("L:\n" + L.Astring() + "\nU:\n" + toString(true) + "\n-------------------------------\n");
+                if (visible) {
+                    System.out.println("L:\n" + L.Astring() + "\nU:\n" + toString(true) + "\n-------------------------------\n");
+                }
+
             }
         }
 
@@ -212,7 +245,7 @@ public class Matrix implements Serializable {
     /*
      * Gauss con pivotaje parcial Sol(0 = L, 1 = U, 2 = P)
      */
-    public Matrix[] gaussP() {
+    public Matrix[] gaussP(boolean visible) {
         Matrix[] sol = new Matrix[3];
         Matrix temp = new Matrix(n);
         for (int i = 0; i < n; i++) {
@@ -221,7 +254,7 @@ public class Matrix implements Serializable {
             }
             temp.b[i] = b[i];
         }
-        Matrix[] tempp = temp.gaussPD();
+        Matrix[] tempp = temp.gaussPD(visible);
         sol[0] = tempp[0];
         sol[1] = temp;
         sol[2] = tempp[1];
@@ -231,7 +264,7 @@ public class Matrix implements Serializable {
     /*
      * Gauss con pivotaje parcial SOL(0 = L, 1 = P)
      */
-    private Matrix[] gaussPD() {
+    private Matrix[] gaussPD(boolean visible) {
         Matrix[] sol = new Matrix[2];
         sol[0] = new Matrix(this.n);
         sol[1] = new Matrix(this.n);
@@ -262,14 +295,19 @@ public class Matrix implements Serializable {
                 double alpha = A[i][p] / A[p][p];
                 sol[0].A[i][p] = alpha;
                 b[i] -= alpha * b[p];
-                if (i == p + 1) {
-                    System.out.print("Swap: " + p + ", " + max);
+                if (visible) {
+                    if (i == p + 1) {
+                        System.out.print("Swap: " + p + ", " + max);
+                    }
+                    System.out.println("\n" + "\u03B1: " + A[i][p] + "/" + A[p][p]);
                 }
-                System.out.println("\n" + "\u03B1: " + A[i][p] + "/" + A[p][p]);
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
-                System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\n-------------------------------\n");
+                if (visible) {
+                    System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\n-------------------------------\n");
+
+                }
 
             }
         }
@@ -279,7 +317,7 @@ public class Matrix implements Serializable {
     /*
      * Gauss con pivotaje maximal Sol(0 = L, 1 = U, 2 = P, 3 = Q)
      */
-    public Matrix[] gaussPM() {
+    public Matrix[] gaussPM(boolean visible) {
         Matrix[] sol = new Matrix[4];
         Matrix temp = new Matrix(n);
         for (int i = 0; i < n; i++) {
@@ -288,7 +326,7 @@ public class Matrix implements Serializable {
             }
             temp.b[i] = b[i];
         }
-        Matrix[] tempp = temp.gaussPMD();
+        Matrix[] tempp = temp.gaussPMD(visible);
         sol[0] = tempp[0]; //L
         sol[1] = temp; //U
         for (int i = 2; i < 4; i++) {
@@ -301,7 +339,7 @@ public class Matrix implements Serializable {
     /*
      * Gauss con pivotaje maximal SOL(0 = L, 1 = P, 2 = Q, 3 = Solution order)
      */
-    private Matrix[] gaussPMD() {
+    private Matrix[] gaussPMD(boolean visible) {
 
         Matrix[] sol = new Matrix[3];
         for (int i = 0; i < sol.length; i++) {
@@ -345,14 +383,19 @@ public class Matrix implements Serializable {
                 double alpha = A[i][p] / A[p][p];
                 sol[0].A[i][p] = alpha;
                 b[i] -= alpha * b[p];
-                if (i == p + 1) {
-                    //System.out.print("SwapRow: " + p + ", " + maxr + "\nSwapCol: " + p + ", " + maxc);
+                if (visible) {
+                    if (i == p + 1) {
+                        System.out.print("SwapRow: " + p + ", " + maxr + "\nSwapCol: " + p + ", " + maxc);
+                    }
+                    System.out.println("\n\u03B1: " + A[i][p] + "/" + A[p][p]);
                 }
-                //System.out.println("\n\u03B1: " + A[i][p] + "/" + A[p][p] );
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
-                //System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\nQ:\n" + sol[2].Astring() + "\n-------------------------------\n");
+                if (visible) {
+                    System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\nQ:\n" + sol[2].Astring() + "\n-------------------------------\n");
+
+                }
 
             }
         }
@@ -360,7 +403,7 @@ public class Matrix implements Serializable {
     }
 
     /*
-     * Back subs algorithm
+     * Returns an array with the solutions of the SEL
      */
     public double[] resolve() {
         double[] solution = new double[n];
@@ -375,7 +418,7 @@ public class Matrix implements Serializable {
     }
 
     /*
-     * Order solutions via solOrder
+     * Order solutions given by solOrder
      */
     private double[] sort(double[] sol) {
         boolean sorted = false;
@@ -399,30 +442,6 @@ public class Matrix implements Serializable {
         return sol;
     }
 
-    public void val() {
-        //Valores que dependen de lo grande que sea tu matriz, abria que hacer un for
-        //y que entrasen sus valores
-        double[] c = {2.5, 2.333333333333333333333333333333333333, 2.75};
-
-        //vector independiente
-        b = new double[]{1, 2, 3};
-
-        System.out.print("Matrix dimension: ");
-        n = sc.nextInt();
-
-        A = new double[n][n];
-        //Valdennoseque matrix
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (j == (n - 1)) {
-                    A[i][j] = 1;
-                } else {
-                    A[i][j] = Math.pow(c[i], n - (j + 1));
-                }
-            }
-        }
-    }
-
     /*
      * Interchanges columns i and j of the A matrix 
      */
@@ -434,6 +453,9 @@ public class Matrix implements Serializable {
         }
     }
 
+    /*
+     * Returns column "i" 
+     */
     private double[] getCol(int i) {
         double[] out = new double[this.n];
         for (int j = 0; j < this.n; j++) {
@@ -450,6 +472,10 @@ public class Matrix implements Serializable {
         A[i] = A[j];
         A[j] = temp;
     }
+
+    //                   //
+    // STRINGS & IMPORTS //
+    //                   //
 
     /*
      * Export Matrix to LaTeX
