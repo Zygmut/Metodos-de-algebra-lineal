@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-enum menu {
-    Create, Remove, Show, Calc, Heat, Extra, Exit;
+enum Main_menu {
+    Create, Remove, Show, Calc, Extra, Exit;
 }
 
-enum calc {
+enum Calcul {
     Gauss, Gauss_pivot, Gauss_complete, Sum, Sub, Det, Exit
+}
+
+enum Extra {
+    Heat, Exit
 }
 
 /**
@@ -19,10 +23,12 @@ enum calc {
  */
 public class Metodos {
 
+    ArrayList menus = new ArrayList();
     Scanner sc = new Scanner(System.in);
     ArrayList<Matrix> matr = new ArrayList();
 
     public void inicio() {
+
         while (true) {
             switch (mainMenu()) {
 
@@ -192,97 +198,114 @@ public class Metodos {
                     }
                     break;
 
-                case 5:
-                    int t = 0,
-                     s = 0;
+                case 5: //Extra
+                    boolean extraExit = false;
+                    int opt3;
+                    System.out.println("");
 
-                    System.out.print("Rod samples: ");
-                    try {
-                        s = Integer.parseInt(sc.nextLine());
-                    } catch (Exception e) {
-                    }
+                    while (!extraExit) {
+                        try {
+                            switch (extraMenu()) {
+                                case 1: //Heat
+                                    int t = 0,
+                                     s = 0;
 
-                    System.out.print("\nTime stamps: ");
-                    try {
-                        t = Integer.parseInt(sc.nextLine());
-                    } catch (Exception e) {
-                    }
+                                    System.out.print("Rod samples: ");
+                                    try {
+                                        s = Integer.parseInt(sc.nextLine());
+                                    } catch (Exception e) {
+                                    }
 
-                    double[][] M = new double[s][t];
+                                    System.out.print("\nTime stamps: ");
+                                    try {
+                                        t = Integer.parseInt(sc.nextLine());
+                                    } catch (Exception e) {
+                                    }
 
-                    //Vectores sin las fronteras, para simplificar la SEL
-                    double[] u = new double[s - 2];
-                    double[] w = new double[s - 2];
+                                    double[][] M = new double[s][t];
 
-                    ArrayList<Double> l = new ArrayList();
-                    ArrayList<Double> r = new ArrayList();
-                    Double L = 1.00,
-                     T = 10.00,
-                     I = (double) s,
-                     J = (double) t,
-                     k = T / J,
-                     h = L / I,
-                     a = k / Math.pow(h, 2),
-                     aux1,
-                     aux2;
-                    Matrix bigHeat = heatMatrix(a, u.length); //SEL Matrix
+                                    //Vectores sin las fronteras, para simplificar la SEL
+                                    double[] u = new double[s - 2];
+                                    double[] w = new double[s - 2];
 
-                    //Fronteras con respecto al tiempo
-                    for (int i = 1; i <= M[0].length + 1; i++) {
-                        aux1 = (6 / Math.PI) * Math.atan(10 * i);
-                        aux2 = (6 / Math.PI) * Math.atan(10 * i);
-                        l.add(aux1);
-                        r.add(aux2);
-                    }
+                                    ArrayList<Double> l = new ArrayList();
+                                    ArrayList<Double> r = new ArrayList();
+                                    Double L = 1.00,
+                                     T = 10.00,
+                                     I = (double) s,
+                                     J = (double) t,
+                                     k = T / J,
+                                     h = L / I,
+                                     a = k / Math.pow(h, 2),
+                                     aux1,
+                                     aux2;
+                                    Matrix bigHeat = heatMatrix(a, u.length); //SEL Matrix
 
-                    System.out.println("---DATA---\nL: " + L + "\nT: " + T + "\nI: " + I + "\nJ: " + J + "\n");
-                    System.out.println("k: " + k);
-                    System.out.println("h: " + h);
-                    System.out.println("h^2: " + Math.pow(h, 2));
-                    System.out.println("\u03B1: " + a + "\n");
-                    System.out.println("---Matrix---");
-                    System.out.println(bigHeat.octexport() + "\n");
-                    System.out.println("---Frontiers---");
-                    System.out.println("Left frontier: " + Arrays.toString(l.toArray()));
-                    System.out.println("Right frontier: " + Arrays.toString(r.toArray()));
-                    System.out.println("\n---CALCULOS---");
+                                    //Fronteras con respecto al tiempo
+                                    for (int i = 1; i <= M[0].length + 1; i++) {
+                                        aux1 = (6 / Math.PI) * Math.atan(10 * i);
+                                        aux2 = (6 / Math.PI) * Math.atan(10 * i);
+                                        l.add(aux1);
+                                        r.add(aux2);
+                                    }
 
-                    //Calculo
-                    for (int i = 0; i < M[0].length; i++) {
-                        u = w;
+                                    System.out.println("---DATA---\nL: " + L + "\nT: " + T + "\nI: " + I + "\nJ: " + J + "\n");
+                                    System.out.println("k: " + k);
+                                    System.out.println("h: " + h);
+                                    System.out.println("h^2: " + Math.pow(h, 2));
+                                    System.out.println("\u03B1: " + a + "\n");
+                                    System.out.println("---Matrix---");
+                                    System.out.println(bigHeat.octexport() + "\n");
+                                    System.out.println("---Frontiers---");
+                                    System.out.println("Left frontier: " + Arrays.toString(l.toArray()));
+                                    System.out.println("Right frontier: " + Arrays.toString(r.toArray()));
+                                    System.out.println("\n---CALCULOS---");
 
-                        //Guardar el vector u en M
-                        M[0][i] = l.get(i);
-                        for (int j = 0; j < M.length - 2; j++) {
-                            M[j + 1][i] = u[j];
+                                    //Calculo
+                                    for (int i = 0; i < M[0].length; i++) {
+                                        u = w;
+
+                                        //Guardar el vector u en M
+                                        M[0][i] = l.get(i);
+                                        for (int j = 0; j < M.length - 2; j++) {
+                                            M[j + 1][i] = u[j];
+                                        }
+                                        M[M.length - 1][i] = r.get(i);
+
+                                        //Adaptar el vector u a la SEL
+                                        u[0] += +a * l.get(i + 1);
+                                        u[u.length - 1] += +a * r.get(i + 1);
+
+                                        bigHeat.b = u;
+                                        w = bigHeat.gaussPM(false)[1].resolve();
+                                    }
+                                    //System.out.println(print(M));
+
+                                    String sMatrix = "";
+                                    for (int i = 0; i < J; i++) {
+                                        sMatrix += "    $fila_{" + i + "}$&: [";
+                                        for (int j = 0; j < M.length - 1; j++) {
+                                            sMatrix += String.format("%.5g", M[j][i]) + ", ";
+                                        }
+                                        sMatrix += String.format("%.5g", M[M.length - 1][i]) + "]\\\\\n";
+                                    }
+                                    System.out.println(sMatrix);
+                                    //System.out.println(Rexport(M));
+                                    break;
+                                case 2:
+                                    extraExit = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            System.out.println("");
+                        } catch (Exception e) {
+                            System.out.println("ERROR: " + e.getLocalizedMessage());
                         }
-                        M[M.length - 1][i] = r.get(i);
-
-                        //Adaptar el vector u a la SEL
-                        u[0] += +a * l.get(i + 1);
-                        u[u.length - 1] += +a * r.get(i + 1);
-
-                        bigHeat.b = u;
-                        w = bigHeat.gaussPM(false)[1].resolve();
                     }
-                    //System.out.println(print(M));
-
-                    String sMatrix = "";
-                    for (int i = 0; i < J; i++) {
-                        sMatrix += "    $fila_{" + i + "}$&: [";
-                        for (int j = 0; j < M.length - 1; j++) {
-                            sMatrix += String.format("%.5g", M[j][i]) + ", ";
-                        }
-                        sMatrix += String.format("%.5g", M[M.length - 1][i]) + "]\\\\\n";
-                    }
-                    System.out.println(sMatrix);
-                    //System.out.println(Rexport(M));
                     break;
 
-                case 6: //Extra
-
-                    break;
-                case 7: //Exit 
+                case 6: //Exit 
                     System.exit(0);
                     break;
                 default: //Def
@@ -390,8 +413,8 @@ public class Metodos {
         System.out.println("*-------------------------------*");
         System.out.println("|           MAIN MENU           |");
         System.out.println("*-------------------------------*");
-        for (int i = 0; i < menu.values().length; i++) {
-            System.out.println((i + 1) + ") " + menu.values()[i].name().replaceAll("_", " "));
+        for (int i = 0; i < Main_menu.values().length; i++) {
+            System.out.println((i + 1) + ") " + Main_menu.values()[i].name().replaceAll("_", " "));
         }
         System.out.println("---------------------------------");
         System.out.print("Option: ");
@@ -408,18 +431,36 @@ public class Metodos {
         System.out.println("*-------------------------------*");
         System.out.println("|           CALC MENU           |");
         System.out.println("*-------------------------------*");
-        for (int i = 0; i < calc.values().length; i++) {
-            System.out.println((i + 1) + ") " + calc.values()[i].name().replaceAll("_", " "));
+        for (int i = 0; i < Calcul.values().length; i++) {
+            System.out.println((i + 1) + ") " + Calcul.values()[i].name().replaceAll("_", " "));
         }
         System.out.println("---------------------------------");
         System.out.print("Option: ");
-        int opt1;
+        int opt;
         try {
-            opt1 = Integer.parseInt(sc.nextLine());
+            opt = Integer.parseInt(sc.nextLine());
         } catch (NumberFormatException e) {
-            opt1 = -1;
+            opt = -1;
         }
-        return opt1;
+        return opt;
+    }
+
+    public int extraMenu() {
+        System.out.println("*-------------------------------*");
+        System.out.println("|          EXTRA MENU           |");
+        System.out.println("*-------------------------------*");
+        for (int i = 0; i < Extra.values().length; i++) {
+            System.out.println((i + 1) + ") " + Extra.values()[i].name().replaceAll("_", " "));
+        }
+        System.out.println("---------------------------------");
+        System.out.print("Option: ");
+        int opt;
+        try {
+            opt = Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            opt = -1;
+        }
+        return opt;
     }
 
     public static void main(String[] args) {
