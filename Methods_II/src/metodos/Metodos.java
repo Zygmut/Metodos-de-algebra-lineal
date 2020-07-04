@@ -10,7 +10,7 @@ enum Main_menu {
 }
 
 enum Calcul {
-    Gauss, Gauss_pivot, Gauss_complete, Sum, Sub, Det, Exit
+    Gauss, Gauss_pivot, Gauss_complete, Sum, Sub, Det, Linear_transformation_matrix_with_other_bases, Exit
 }
 
 enum Extra {
@@ -184,7 +184,39 @@ public class Metodos {
                                             break;
                                     }
                                     break;
-                                case 7: //Exit
+                                case 7: //Linear transformation matrix with other bases
+                                    Matrix T,
+                                     B,
+                                     t_B;
+                                    System.out.print("Dimension: ");
+                                    int dim = Integer.parseInt(sc.nextLine());
+                                    T = new Matrix(dim);
+                                    B = new Matrix(dim);
+                                    t_B = new Matrix(dim);
+
+                                    System.out.println("T:");
+                                    T.populate();
+                                    System.out.println("\nB:");
+                                    B.populate();
+
+                                    for (int i = 0; i < dim; i++) {
+                                        Matrix temp = new Matrix(dim);
+                                        for (int j = 0; j < dim; j++) {
+                                            for (int k = 0; k < dim; k++) {
+                                                temp.A[j][k] = B.A[j][k];
+                                            }
+                                            temp.b[j] = T.A[j][i];
+                                        }
+                                        double[] solution = temp.gaussPM(false)[1].resolve();
+                                        for (int j = 0; j < dim; j++) {
+                                            t_B.A[j][i] = solution[j];
+                                        }
+                                    }
+
+                                    System.out.println("\nT:\n" + T.Astring() + "\nB:\n" + B.Astring() + "\nT_B:\n" + t_B.Astring());
+                                    break;
+
+                                case 8: //Exit
                                     calcexit = true;
                                     break;
 
@@ -200,7 +232,6 @@ public class Metodos {
 
                 case 5: //Extra
                     boolean extraExit = false;
-                    int opt3;
                     System.out.println("");
 
                     while (!extraExit) {
@@ -213,13 +244,13 @@ public class Metodos {
                                     System.out.print("Rod samples: ");
                                     try {
                                         s = Integer.parseInt(sc.nextLine());
-                                    } catch (Exception e) {
+                                    } catch (NumberFormatException e) {
                                     }
 
                                     System.out.print("\nTime stamps: ");
                                     try {
                                         t = Integer.parseInt(sc.nextLine());
-                                    } catch (Exception e) {
+                                    } catch (NumberFormatException e) {
                                     }
 
                                     double[][] M = new double[s][t];
@@ -466,5 +497,4 @@ public class Metodos {
     public static void main(String[] args) {
         new Metodos().inicio();
     }
-
 }
