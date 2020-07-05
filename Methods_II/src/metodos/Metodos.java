@@ -102,7 +102,7 @@ public class Metodos {
                                     }
                                     sol = matr.get(opt2).gauss(true);
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
-
+                                    save(sol);
                                     break;
 
                                 case 2: //GaussP
@@ -118,7 +118,7 @@ public class Metodos {
                                     }
                                     sol = matr.get(opt2).gaussP(true);
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
-
+                                    save(sol);
                                     break;
 
                                 case 3: //GaussPM
@@ -134,7 +134,7 @@ public class Metodos {
                                     }
                                     sol = matr.get(opt2).gaussPM(true);
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nQ\n" + sol[3].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
-
+                                    save(sol);
                                     break;
                                 case 4: //Sum
                                     switch (matr.size()) {
@@ -372,39 +372,39 @@ public class Metodos {
     /*
      * Prints the M Matrix, just for convenience
      */
-    private String print(double[][] M) {
-        String sMatrix = "";
-        for (int i = 0; i < M[0].length; i++) {
-            sMatrix += i + " [";
-            for (int j = 0; j < M.length - 1; j++) {
-                sMatrix += String.format("%.4g", M[j][i]) + " | ";
-            }
-            sMatrix += String.format("%.4g", M[M.length - 1][i]) + "]\n";
-        }
-        return sMatrix;
-    }
+//    private String print(double[][] M) {
+//        String sMatrix = "";
+//        for (int i = 0; i < M[0].length; i++) {
+//            sMatrix += i + " [";
+//            for (int j = 0; j < M.length - 1; j++) {
+//                sMatrix += String.format("%.4g", M[j][i]) + " | ";
+//            }
+//            sMatrix += String.format("%.4g", M[M.length - 1][i]) + "]\n";
+//        }
+//        return sMatrix;
+//    }
 
     /*
      * Prints the M Matrix, just for convenience
      */
-    private String Rexport(double[][] M) {
-        String sMatrix = "";
-        String temp = "matrix = rbind(";
-        for (int i = 0; i < M[0].length; i++) {
-            sMatrix += "c" + i + "= c(";
-            for (int j = 0; j < M.length - 1; j++) {
-                sMatrix += String.format("%.5g", M[j][i]) + ", ";
-            }
-            sMatrix += String.format("%.5g", M[M.length - 1][i]) + ")\n";
-            temp += "c" + i;
-            if (i != M[0].length - 1) {
-                temp += ",";
-            }
-
-        }
-        sMatrix += temp + ")";
-        return sMatrix;
-    }
+//    private String Rexport(double[][] M) {
+//        String sMatrix = "";
+//        String temp = "matrix = rbind(";
+//        for (int i = 0; i < M[0].length; i++) {
+//            sMatrix += "c" + i + "= c(";
+//            for (int j = 0; j < M.length - 1; j++) {
+//                sMatrix += String.format("%.5g", M[j][i]) + ", ";
+//            }
+//            sMatrix += String.format("%.5g", M[M.length - 1][i]) + ")\n";
+//            temp += "c" + i;
+//            if (i != M[0].length - 1) {
+//                temp += ",";
+//            }
+//
+//        }
+//        sMatrix += temp + ")";
+//        return sMatrix;
+//    }
 
     /*
      * Export Matrix to LaTeX
@@ -438,6 +438,33 @@ public class Metodos {
             rem = Integer.parseInt(sc.nextLine());
         }
         return rem;
+    }
+
+    /*
+     * Save controller
+     */
+    public void save(Matrix[] matrix) {
+        System.out.print("Would you like to save a Matrix?: ");
+        String save = sc.nextLine();
+        int[] saveNumber;
+        if (!save.equalsIgnoreCase("n")) {
+            if (save.contains(",")) {
+                String[] temp = save.split(",");
+                saveNumber = new int[temp.length];
+                for (int i = 0; i < temp.length; i++) {
+                    saveNumber[i] = Integer.parseInt(temp[i]);
+                }
+            } else {
+                int tempNumber = Integer.parseInt(save);
+                saveNumber = new int[1];
+                saveNumber[0] = tempNumber;
+            }
+
+            for (int i = 0; i < saveNumber.length; i++) {
+                matr.add(matrix[saveNumber[i]]);
+            }
+        }
+
     }
 
     public int mainMenu() {
