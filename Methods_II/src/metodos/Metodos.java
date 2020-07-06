@@ -50,12 +50,45 @@ public class Metodos {
 
                 case 2: //Remove
                     try {
-                        if (matr.isEmpty()) {
-                            throw new ArrayEmptyException();
-                        } else {
-                            int rem = checkMatr();
-                            matr.remove(rem);
-                            System.out.println("Matrix [" + rem + "] removed");
+
+                        int rem;
+                        switch (matr.size()) {
+                            case 0:
+                                throw new ArrayEmptyException();
+
+                            case 1:
+                                matr.remove(0);
+                                break;
+
+                            default:
+                                System.out.print("Wich Matrix: ");
+                                String input = sc.nextLine();
+                                if (input.equalsIgnoreCase("all")) {
+                                    matr.clear();
+                                    System.out.println("All Matrix have been removed");
+                                } else {
+                                    if (input.contains(",")) {
+                                        String[] tempString = input.split(",");
+                                        for (int i = 0; i < tempString.length; i++) {
+                                            try {
+                                                matr.remove(Integer.parseInt(tempString[i]));
+                                                System.out.println("Matrix [" + i + "] has been removed");
+                                            } catch (Exception e) {
+                                                System.out.println("Matrix [" + Integer.parseInt(tempString[i]) + "] is not suitable to be removed");
+                                            }
+                                        }
+                                    } else {
+                                        try {
+                                            matr.remove(Integer.parseInt(input));
+                                            System.out.println("Matrix [" + Integer.parseInt(input) + "] has been saved");
+                                        } catch (Exception e) {
+                                            System.out.println("Matrix [" + Integer.parseInt(input) + "] is not suitable to be removed");
+                                        }
+
+                                    }
+                                }
+
+                                break;
                         }
                     } catch (NumberFormatException | ArrayEmptyException e) {
                         System.out.println("ERROR: " + e.getLocalizedMessage());
@@ -461,7 +494,13 @@ public class Metodos {
             }
 
             for (int i = 0; i < saveNumber.length; i++) {
-                matr.add(matrix[saveNumber[i]]);
+                try {
+                    matr.add(matrix[saveNumber[i]]);
+                    System.out.println("Matrix [" + i + "] has been saved");
+                } catch (Exception e) {
+                    System.out.println("Matrix [" + i + "] is not suitable to be saved");
+                }
+
             }
         }
 
