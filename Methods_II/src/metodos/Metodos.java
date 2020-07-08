@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 enum Main_menu {
-    Create, Remove, Show, Calc, Extra, Exit;
+    Create, Edit, Remove, Show, Calc, Extra, Exit;
 }
 
 enum Calcul {
@@ -133,8 +133,15 @@ public class Metodos {
                                             opt2 = checkMatr();
                                             break;
                                     }
+                                    String solution;
                                     sol = matr.get(opt2).gauss(true);
-                                    System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
+                                    if (checkLU()) {
+                                        solution = Arrays.toString(matr.get(opt2).resolveLU(0, true));
+                                    }else{
+                                        solution = Arrays.toString(sol[1].resolve());
+                                    }
+                                    
+                                    System.out.println("---FINAL---\nL:\n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + solution);
                                     save(sol);
                                     break;
 
@@ -240,9 +247,9 @@ public class Metodos {
                                             }
                                             temp.b[j] = T.A[j][i];
                                         }
-                                        double[] solution = temp.gaussPM(false)[1].resolve();
+                                        double[] solution1 = temp.gaussPM(false)[1].resolve();
                                         for (int j = 0; j < dim; j++) {
-                                            t_B.A[j][i] = solution[j];
+                                            t_B.A[j][i] = solution1[j];
                                         }
                                     }
 
@@ -477,10 +484,10 @@ public class Metodos {
      * Save controller
      */
     public void save(Matrix[] matrix) {
-        System.out.print("Would you like to save a Matrix?: ");
+        System.out.print("Would you like to save a Matrix?(y/n): ");
         String save = sc.nextLine();
         int[] saveNumber;
-        if (!save.equalsIgnoreCase("n")) {
+        if (!"n".equals(save)) {
             if (save.contains(",")) {
                 String[] temp = save.split(",");
                 saveNumber = new int[temp.length];
@@ -500,12 +507,19 @@ public class Metodos {
                 } catch (Exception e) {
                     System.out.println("Matrix [" + i + "] is not suitable to be saved");
                 }
-
             }
         }
-
     }
 
+    /*
+     * Solution controller
+     */
+    public boolean checkLU(){
+        boolean LU = false;
+        System.out.print("Want to use LU factorization to resolve this Matrix?(y/n): ");
+        LU = sc.nextLine().equalsIgnoreCase("y");
+        return LU;
+    }
     public int mainMenu() {
         System.out.println("*-------------------------------*");
         System.out.println("|           MAIN MENU           |");

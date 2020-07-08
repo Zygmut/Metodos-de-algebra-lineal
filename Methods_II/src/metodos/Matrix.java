@@ -1,6 +1,7 @@
 package metodos;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Scanner;
 import metodos.UserExceptions.*;
 
@@ -418,6 +419,35 @@ public class Matrix implements Serializable {
     }
 
     /*
+     * Returns an array with the solution with the LU decomposition, where value is the methos used (Gauss, GaussP GaussPM)
+     */
+    public double[] resolveLU(int value, boolean visible) {
+        double[] solution = new double[n];
+        Matrix[] temp;
+        switch (value) {
+            case 0: //Gauss
+                temp = this.gauss(false);
+                temp[0].b = this.b;
+                System.out.println("L calcul:\n");
+                temp[1].b = temp[0].gauss(visible)[1].resolve();
+                System.out.println(Arrays.toString(temp[1].b) + "\n");
+                System.out.print("U calcul:\n");
+                temp[1].SEL = true;
+                System.out.println(temp[1].toString());
+                solution = temp[1].resolve();
+                break;
+            case 1: //GaussP
+                break;
+            case 2: //GaussPM
+                break;
+            default:
+                System.out.println("Value not suitable fot resolveLU function");
+                break;
+        }
+        return solution;
+    }
+
+    /*
      * Order solutions given by solOrder
      */
     private double[] sort(double[] sol) {
@@ -508,7 +538,6 @@ public class Matrix implements Serializable {
             } else {
                 out += A[i][n - 1] + "; ";
             }
-
         }
         out += "]";
         return out;
@@ -539,7 +568,6 @@ public class Matrix implements Serializable {
                 out += "| " + b[i];
             }
             out += "\n";
-
         }
         return out;
     }
@@ -554,9 +582,7 @@ public class Matrix implements Serializable {
                 out += "| " + b[i];
             }
             out += "\n";
-
         }
         return out;
     }
-
 }
