@@ -6,11 +6,11 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 enum Main_menu {
-    Create, Remove, Show, Calc, Extra, Exit;
+    Create, Edit, Remove, Show, Calc, Extra, Exit;
 }
 
 enum Calcul {
-    Gauss, Gauss_pivot, Gauss_complete, Sum, Sub, Det, Linear_transformation_matrix_with_other_bases, Exit
+    Gauss, Gauss_pivot, Gauss_complete, Sum, Sub, Det, Matriz_de_cambio_de_base, Exit
 }
 
 enum Extra {
@@ -48,10 +48,31 @@ public class Metodos {
                     }
                     break;
 
-                case 2: //Remove
+                case 2: //Edit
                     try {
-
-                        int rem;
+                        switch (matr.size()) {
+                            case 0:
+                                throw new ArrayEmptyException();
+                            case 1:
+                                for (int i = 0; i < matr.get(0).n; i++) {
+                                    System.out.print("result [" + i + "]: ");
+                                    matr.get(0).b[i] = sc.nextDouble();
+                                }
+                                break;
+                            default:
+                                int optemp = checkMatr();
+                                for (int i = 0; i < matr.get(optemp).n; i++) {
+                                    System.out.print("result [" + i + "]: ");
+                                    matr.get(optemp).b[i] = sc.nextDouble();
+                                }
+                                break;
+                        }
+                    } catch (Exception e) {
+                        System.out.println("ERROR: " + e.getLocalizedMessage());
+                    }
+                    break;
+                case 3: //Remove
+                    try {
                         switch (matr.size()) {
                             case 0:
                                 throw new ArrayEmptyException();
@@ -87,7 +108,6 @@ public class Metodos {
 
                                     }
                                 }
-
                                 break;
                         }
                     } catch (NumberFormatException | ArrayEmptyException e) {
@@ -95,7 +115,7 @@ public class Metodos {
                     }
                     break;
 
-                case 3: //Show
+                case 4: //Show
                     try {
                         System.out.println("");
                         if (matr.isEmpty()) {
@@ -113,13 +133,11 @@ public class Metodos {
                     }
                     break;
 
-                case 4: //Calc
+                case 5: //Calc
                     boolean calcexit = false;
                     int opt2;
                     Matrix[] sol;
-                    String solution;
                     System.out.println("");
-
                     while (!calcexit) {
                         try {
                             switch (calcMenu()) {
@@ -135,13 +153,7 @@ public class Metodos {
                                             break;
                                     }
                                     sol = matr.get(opt2).gauss(true);
-                                    if (checkLU()) {
-                                        solution = Arrays.toString(matr.get(opt2).resolveLU(0, true));
-                                    } else {
-                                        solution = Arrays.toString(sol[1].resolve());
-                                    }
-
-                                    System.out.println("---FINAL---\nL:\n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + solution);
+                                    System.out.println("---FINAL---\nL:\n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
                                     save(sol);
                                     break;
 
@@ -157,7 +169,6 @@ public class Metodos {
                                             break;
                                     }
                                     sol = matr.get(opt2).gaussP(true);
-                                    
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
                                     save(sol);
                                     break;
@@ -219,7 +230,6 @@ public class Metodos {
                                             System.out.println("Determinant: " + matr.get(0).det());
                                             break;
                                         default:
-                                            opt2 = checkMatr();
                                             int opt3 = checkMatr();
                                             System.out.println("Determinant: " + matr.get(opt3).det());
                                             break;
@@ -271,7 +281,7 @@ public class Metodos {
                     }
                     break;
 
-                case 5: //Extra
+                case 6: //Extra
                     boolean extraExit = false;
                     System.out.println("");
 
@@ -377,7 +387,7 @@ public class Metodos {
                     }
                     break;
 
-                case 6: //Exit 
+                case 7: //Exit 
                     System.exit(0);
                     break;
                 default: //Def
@@ -485,7 +495,7 @@ public class Metodos {
      * Save controller
      */
     public void save(Matrix[] matrix) {
-        System.out.print("Would you like to save a Matrix?(y/n): ");
+        System.out.print("Would you like to save a Matrix?: ");
         String save = sc.nextLine();
         int[] saveNumber;
         if (!"n".equals(save)) {

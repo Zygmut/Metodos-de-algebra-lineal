@@ -1,11 +1,9 @@
 package metodos;
 
-import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Scanner;
 import metodos.UserExceptions.*;
 
-public class Matrix implements Serializable {
+public class Matrix {
 
     Scanner sc = new Scanner(System.in);
 
@@ -227,13 +225,13 @@ public class Matrix implements Serializable {
                 alpha = A[i][p] / A[p][p];
                 L.A[i][p] = alpha;
                 b[i] -= alpha * b[p];
-                if (visible) {
+                if (visible && alpha != 0) {
                     System.out.println("\u03B1: " + A[i][p] + "/" + A[p][p] + "\n");
                 }
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
-                if (visible) {
+                if (visible && alpha != 0) {
                     System.out.println("L:\n" + L.Astring() + "\nU:\n" + toString(true) + "\n-------------------------------\n");
                 }
 
@@ -296,7 +294,7 @@ public class Matrix implements Serializable {
                 double alpha = A[i][p] / A[p][p];
                 sol[0].A[i][p] = alpha;
                 b[i] -= alpha * b[p];
-                if (visible) {
+                if (visible && alpha!= 0) {
                     if (i == p + 1) {
                         System.out.print("Swap: " + p + ", " + max);
                     }
@@ -305,7 +303,7 @@ public class Matrix implements Serializable {
                 for (int j = p; j < n; j++) {
                     A[i][j] -= alpha * A[p][j];
                 }
-                if (visible) {
+                if (visible && alpha!= 0) {
                     System.out.println("\nL:\n" + sol[0].Astring() + "\nMatrix:\n" + this.toString(true) + "\nP:\n" + sol[1].Astring() + "\n-------------------------------\n");
 
                 }
@@ -419,35 +417,6 @@ public class Matrix implements Serializable {
     }
 
     /*
-     * Returns an array with the solution with the LU decomposition, where value is the methos used (Gauss, GaussP GaussPM)
-     */
-    public double[] resolveLU(int value, boolean visible) {
-        double[] solution = new double[n];
-        Matrix[] temp;
-        switch (value) {
-            case 0: //Gauss
-                temp = this.gauss(false);
-                temp[0].b = this.b;
-                System.out.println("L calcul:\n");
-                temp[1].b = temp[0].gauss(visible)[1].resolve();
-                System.out.println(Arrays.toString(temp[1].b) + "\n");
-                System.out.print("U calcul:\n");
-                temp[1].SEL = true;
-                System.out.println(temp[1].toString());
-                solution = temp[1].resolve();
-                break;
-            case 1: //GaussP
-                break;
-            case 2: //GaussPM
-                break;
-            default:
-                System.out.println("Value not suitable fot resolveLU function");
-                break;
-        }
-        return solution;
-    }
-
-    /*
      * Order solutions given by solOrder
      */
     private double[] sort(double[] sol) {
@@ -504,7 +473,7 @@ public class Matrix implements Serializable {
     }
 
     //                   //
-    // STRINGS & IMPORTS //
+    // STRINGS & EXPORTS //
     //                   //
 
     /*
