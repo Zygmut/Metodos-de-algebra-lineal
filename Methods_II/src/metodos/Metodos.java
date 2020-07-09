@@ -157,11 +157,7 @@ public class Metodos {
                                             break;
                                     }
                                     sol = matr.get(opt2).gaussP(true);
-                                    if (checkLU()) {
-                                        solution = Arrays.toString(matr.get(opt2).resolveLU(1, true));
-                                    } else {
-                                        solution = Arrays.toString(sol[1].resolve());
-                                    }
+                                    
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
                                     save(sol);
                                     break;
