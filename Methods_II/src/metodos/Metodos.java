@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 enum Main_menu {
-    Create, Edit, Remove, Show, Calc, Extra, Exit;
+    Create, Remove, Show, Calc, Extra, Exit;
 }
 
 enum Calcul {
@@ -117,6 +117,7 @@ public class Metodos {
                     boolean calcexit = false;
                     int opt2;
                     Matrix[] sol;
+                    String solution;
                     System.out.println("");
 
                     while (!calcexit) {
@@ -133,14 +134,13 @@ public class Metodos {
                                             opt2 = checkMatr();
                                             break;
                                     }
-                                    String solution;
                                     sol = matr.get(opt2).gauss(true);
                                     if (checkLU()) {
                                         solution = Arrays.toString(matr.get(opt2).resolveLU(0, true));
-                                    }else{
+                                    } else {
                                         solution = Arrays.toString(sol[1].resolve());
                                     }
-                                    
+
                                     System.out.println("---FINAL---\nL:\n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nSol: " + solution);
                                     save(sol);
                                     break;
@@ -157,6 +157,11 @@ public class Metodos {
                                             break;
                                     }
                                     sol = matr.get(opt2).gaussP(true);
+                                    if (checkLU()) {
+                                        solution = Arrays.toString(matr.get(opt2).resolveLU(1, true));
+                                    } else {
+                                        solution = Arrays.toString(sol[1].resolve());
+                                    }
                                     System.out.println("---FINAL---\nL: \n" + sol[0].toString() + "\nU:\n" + sol[1].toString() + "\nP\n" + sol[2].toString() + "\nSol: " + Arrays.toString(sol[1].resolve()));
                                     save(sol);
                                     break;
@@ -514,12 +519,13 @@ public class Metodos {
     /*
      * Solution controller
      */
-    public boolean checkLU(){
+    public boolean checkLU() {
         boolean LU = false;
         System.out.print("Want to use LU factorization to resolve this Matrix?(y/n): ");
         LU = sc.nextLine().equalsIgnoreCase("y");
         return LU;
     }
+
     public int mainMenu() {
         System.out.println("*-------------------------------*");
         System.out.println("|           MAIN MENU           |");
